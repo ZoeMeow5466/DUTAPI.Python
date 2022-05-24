@@ -1,0 +1,15 @@
+[Visual Studio Projects]
+.vs/*
+
+[Visual Studio Code]
+.vscode/*
+
+[Python Projects]
+DUTAPI/__pycache__/*
+.venv/*
+
+[Temporary files]
+main*.py
+test*.py
+schExam.json
+schStudy.json
