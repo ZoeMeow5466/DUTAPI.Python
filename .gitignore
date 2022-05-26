@@ -13,3 +13,5 @@ main*.py
 test*.py
 schExam.json
 schStudy.json
+test*.htm
+test*.html

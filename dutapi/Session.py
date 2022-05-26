@@ -8,6 +8,7 @@ from requests.structures import CaseInsensitiveDict
 from dutapi.__Variables__ import *
 from dutapi.Enums import *
 from dutapi.Utils import *
+from dutapi.AccountColumnInfo import *
 
 def GenerateSessionID():
     WEB_SESSION = requests.Session()
@@ -244,3 +245,23 @@ def GetSubjectFee(sessionID: str, year: int = 20, semester: int = 1, studyAtSumm
         result['feelist'] = []
     finally:
         return result
+
+def GetAccountInformation(sessionID: str):
+    result = {}
+    result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
+    result['accountinfo'] = {}
+
+    try:
+        if (IsLoggedIn(sessionID) == False):
+            raise Exception('Page isn\'t load successfully.')
+        headers = CaseInsensitiveDict()
+        headers['Cookie'] = "ASP.NET_SessionId={id}".format(id=sessionID)
+        webHTML = requests.get(URL_ACCOUNTINFORMATION, headers=headers)
+        soup = BeautifulSoup(webHTML.content, 'lxml')
+        for col in accInfoCol:
+            result['accountinfo'][col['jsname']] = GetValueFromAccountInformation(soup, col)
+    except Exception as ex:
+        pass
+    finally:
+        return result
+        

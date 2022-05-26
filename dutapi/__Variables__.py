@@ -6,6 +6,7 @@ URL_ACCOUNTLOGOUT = 'http://sv.dut.udn.vn/PageLogout.aspx'
 URL_ACCOUNTCHECKLOGIN = 'http://sv.dut.udn.vn/WebAjax/evLopHP_Load.aspx?E=THPhiLoad&Code=2020'
 URL_ACCOUNTSCHEDULE = 'http://sv.dut.udn.vn/WebAjax/evLopHP_Load.aspx?E=TTKBLoad&Code={nam}{hocky}{hoche}'
 URL_ACCOUNTFEE = 'http://sv.dut.udn.vn/WebAjax/evLopHP_Load.aspx?E=THPhiLoad&Code={nam}{hocky}{hoche}'
+URL_ACCOUNTINFORMATION = 'http://sv.dut.udn.vn/PageCaNhan.aspx'
 
 VIEWSTATE = ''.join([
     '/wEPDwUKMTY2NjQ1OTEyNA8WAh4TVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgJmD2QWAgIFDxYCHglpbm5lcmh0bWwF/iw8dWwgaWQ',
