@@ -1,4 +1,5 @@
 
+from bs4 import BeautifulSoup
 from datetime import datetime
 import time
 import json
@@ -19,3 +20,17 @@ def GetCurrentWeek(year: int = 21):
 # Get current GMT
 def GetRegionGMT():
     return round((-time.timezone) / 3600, 1)
+
+def GetValueFromAccountInformation(soup: BeautifulSoup, id: dict):
+    tempHtml = soup.find(id['tag'], {'id': id['id']})
+    try:
+        if (id['tag'] == 'input'):
+            return tempHtml['value']
+        elif (id['tag'] == 'select'):
+            for tempOption in tempHtml.find_all('option', {'selected': 'selected'}):
+                return tempOption.text
+        else:
+            raise Exception('Undefined')
+    except Exception as ex:
+        print('Can\'t get {id}: {err}'.format(id=id['id'], err=ex))
+        return None
