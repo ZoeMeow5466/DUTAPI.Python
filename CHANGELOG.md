@@ -2,6 +2,10 @@
 
 This file will list all version log for modified, add or remove function of DUTAPI.
 
+## 1.5.0
+
+- Added Account Information when you logged in (remember: this will get data from page, not for edit them).
+
 ## 1.4.5
 
 - Remove unnecessary key "gmt" (due to key "date" has already included).

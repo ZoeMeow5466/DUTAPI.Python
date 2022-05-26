@@ -36,10 +36,9 @@ Wiki, or manual for how-to-use?
 
 ## Latest change log
 
-Version 1.4.5
+Version 1.5.0
 
-- Remove unnecessary key "gmt" (due to key "date" has already included).
-- Add key "position" in GetNews(): Easier get link in key "contenttext".
+- Added Account Information when you logged in (remember: this will get data from page, not for edit them).
 
 [Click here](CHANGELOG.md) for all log versions.
 
