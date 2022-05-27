@@ -246,11 +246,14 @@ def GetSubjectFee(sessionID: str, year: int = 20, semester: int = 1, studyAtSumm
     finally:
         return result
 
+def __getStudentID__(soup: BeautifulSoup):
+    baseTxt = soup.find('span', {'id': 'Main_lblHoTen'}).text
+    return baseTxt[baseTxt.index('(') + 1:baseTxt.index(')')]
+
 def GetAccountInformation(sessionID: str):
     result = {}
     result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
     result['accountinfo'] = {}
-
     try:
         if (IsLoggedIn(sessionID) == False):
             raise Exception('Page isn\'t load successfully.')
@@ -260,6 +263,7 @@ def GetAccountInformation(sessionID: str):
         soup = BeautifulSoup(webHTML.content, 'lxml')
         for col in accInfoCol:
             result['accountinfo'][col['jsname']] = GetValueFromAccountInformation(soup, col)
+        result['accountinfo']['studentId'] = __getStudentID__(soup)
     except Exception as ex:
         pass
     finally:
