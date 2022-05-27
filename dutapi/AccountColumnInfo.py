@@ -7,12 +7,12 @@ accInfoCol = [
     {
         'tag': 'input',
         'id': 'CN_txtNgaySinh',
-        'jsname': 'dateofbirth',
+        'jsname': 'dateOfBirth',
     },
     {
         'tag': 'select',
         'id': 'CN_cboNoiSinh',
-        'jsname': 'birthplace',
+        'jsname': 'birthPlace',
     },
     {
         'tag': 'input',
@@ -32,42 +32,42 @@ accInfoCol = [
     {
         'tag': 'input',
         'id': 'CN_txtSoCMND',
-        'jsname': 'nationalidcard',
+        'jsname': 'nationalIdCard',
     },
     {
         'tag': 'input',
         'id': 'CN_txtNgayCap',
-        'jsname': 'nationalidcardissuedate',
+        'jsname': 'nationalIdCardIssueDate',
     },
     {
         'tag': 'select',
         'id': 'CN_cboNoiCap',
-        'jsname': 'nationalidcardissueplace',
+        'jsname': 'nationalIdCardIssuePlace',
     },
     {
         'tag': 'input',
         'id': 'CN_txtSoCCCD',
-        'jsname': 'citizenidcard',
+        'jsname': 'citizenIdCard',
     },
     {
         'tag': 'input',
         'id': 'CN_txtNcCCCD',
-        'jsname': 'citizenidcardissuedate',
+        'jsname': 'citizenIdCardIssueDate',
     },
     {
         'tag': 'select',
         'id': 'CN_cboTonGiao',
-        'jsname': 'Religion',
+        'jsname': 'religion',
     },
     {
         'tag': 'input',
         'id': 'CN_txtTKNHang',
-        'jsname': 'accountbankid',
+        'jsname': 'accountBankId',
     },
     {
         'tag': 'input',
         'id': 'CN_txtNgHang',
-        'jsname': 'accountbankname',
+        'jsname': 'accountBankName',
     },
     {
         'tag': 'input',
@@ -132,21 +132,21 @@ accInfoCol = [
     {
         'tag': 'select',
         'id': 'CN_cboDCCua',
-        'jsname': 'addressfrom',
+        'jsname': 'addressFrom',
     },
     {
         'tag': 'select',
         'id': 'CN_cboTinhCTru',
-        'jsname': 'addresscity',
+        'jsname': 'addressCity',
     },
     {
         'tag': 'select',
         'id': 'CN_cboQuanCTru',
-        'jsname': 'addressdistrict',
+        'jsname': 'addressDistrict',
     },
     {
         'tag': 'select',
         'id': 'CN_cboPhuongCTru',
-        'jsname': 'addresssubdistrict',
+        'jsname': 'addressSubDistrict',
     },
 ]
