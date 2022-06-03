@@ -11,7 +11,7 @@ DUTAPI/__pycache__/*
 [Temporary files]
 main*.py
 test*.py
-schExam.json
-schStudy.json
+schFee*.json
+schStudy*.json
 test*.htm
 test*.html

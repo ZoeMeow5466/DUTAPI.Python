@@ -25,18 +25,18 @@ def IsLoggedIn(sessionID: str):
     # Prepare a result data.
     result = {}
     result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
-    result['sessionid'] = sessionID
-    result['loggedin'] = False
+    result['session_id'] = sessionID
+    result['logged_in'] = False
     try:
         # If session id is not exist, create one
         headers = CaseInsensitiveDict()
         headers["Cookie"] = "ASP.NET_SessionId={id};".format(id=sessionID)
         response = requests.get(URL_ACCOUNTCHECKLOGIN, headers=headers) 
         if (response.status_code in [200, 204]):
-            result['loggedin'] = True
+            result['logged_in'] = True
     except:
         # If something went wrong, 'loggedin' will False.
-        result['loggedin'] = False
+        result['logged_in'] = False
     finally:
         # Return result
         return result
@@ -71,32 +71,7 @@ def Logout(sessionID: str):
     #
     return IsLoggedIn(sessionID)
 
-def __TableRowToJson__(row, dataInput):
-    result = {}
-    try:
-        cell = row.find_all('td', {'class':'GridCell'})
-        for i in range(0, len(dataInput), 1):
-            if (dataInput[i][2].lower() == 'num'):
-                try:
-                    result[dataInput[i][0]] = float(cell[dataInput[i][1]].text.replace(',',''))
-                except:
-                    result[dataInput[i][0]] = 0
-            elif (dataInput[i][2].lower() == 'bool'):
-                if 'GridCheck' in cell[dataInput[i][1]].attrs.get('class'):
-                    result[dataInput[i][0]] = True
-                else:
-                    result[dataInput[i][0]] = False
-            elif (dataInput[i][2].lower() == 'string'):
-                result[dataInput[i][0]] = cell[dataInput[i][1]].text
-            else:
-                pass
-        pass
-    except:
-        result = {}
-    finally:
-        return result
-
-def __string2ExamSchedule__(src: str, gmt = 7.0):
+def __string2ExamSchedule__(src: str):
     # If string is empty, return {}
     if (len(src.replace(' ', '')) == 0):
         return {
@@ -127,7 +102,6 @@ def __string2ExamSchedule__(src: str, gmt = 7.0):
                 date = date.replace(hour=int(splitted[0]))
             if len(splitted) > 1:
                 date = date.replace(minute=int(splitted[1]))
-    date = date - timedelta(seconds=int((GetRegionGMT() * 3600))) + timedelta(seconds=int(gmt * 3600))
     # Return
     result = {}
     result['examDate'] = round(datetime.timestamp(date) * 1000, 0)
@@ -143,8 +117,8 @@ def GetSubjectSchedule(sessionID: str, year: int = 20, semester: int = 1, studyA
     """
     result = {}
     result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
-    result['totalcredit'] = 0.0
-    result['schedulelist'] = []
+    result['total_credit'] = 0.0
+    result['schedule_list'] = []
     try:
         if (IsLoggedIn(sessionID) == False):
             raise Exception('Page isn\'t load successfully.')
@@ -157,44 +131,74 @@ def GetSubjectSchedule(sessionID: str, year: int = 20, semester: int = 1, studyA
         headers['Cookie'] = "ASP.NET_SessionId={id}".format(id=sessionID)
         webHTML = requests.get(url, headers=headers)
         soup = BeautifulSoup(webHTML.content, 'lxml')
-        # Find all subjects schedule when study
+        # Find all subjects schedule
         schStudyTable = soup.find('table', {'id': 'TTKB_GridInfo'})
         schStudyRow = schStudyTable.find_all('tr', {'class': 'GridRow'})
-        dataSchStudy = [
-            ['ID', 1, 'string'],
-            ['Name', 2, 'string'],
-            ['Credit', 3, 'num'],
-            ['IsHighQuality', 5, 'bool'],
-            ['Lecturer', 6, 'string'],
-            ['ScheduleStudy', 7, 'string'],
-            ['Weeks', 8, 'string'],
-            ['PointFomula', 10, 'string']
-        ]
+    
         for i in range(0, len(schStudyRow) - 1, 1):
-            resultRow = __TableRowToJson__(schStudyRow[i], dataSchStudy)
-            result['totalcredit'] += resultRow['Credit']
-            result['schedulelist'].append(resultRow)
+            cell = schStudyRow[i].find_all('td', {'class':'GridCell'})
+            resultRow = {}
+            # ID
+            resultRow['id'] = cell[1].text
+            # Name
+            resultRow['name'] = cell[2].text
+            # Credit
+            resultRow['credit'] = float(cell[3].text)
+            # Is High Quality
+            resultRow['is_high_quality'] = True if ('GridCheck' in cell[5].attrs.get('class')) else False
+            # Lecturer name
+            resultRow['lecturer'] = cell[6].text
+            # Schedule study area
+            resultRow['schedule_study'] = {}
+            # Schedule study
+            if (cell[7].text != None and len(cell[7].text) > 0):
+                resultRow['schedule_study']['schedule'] = []
+                cellSplit = cell[7].text.split('; ') if ('; ' in cell[7].text) else [cell[7].text]
+                for cellSplitItem in cellSplit:
+                    item = {}
+                    item['day_of_week'] = 0 if ('CN' in cellSplitItem.upper()) else (int(cellSplitItem.split(',')[0].split(' ')[1]) - 1)
+                    item['lesson'] = {}
+                    item['lesson']['start'] = cellSplitItem.split(',')[1].split('-')[0]
+                    item['lesson']['end'] = cellSplitItem.split(',')[1].split('-')[1]
+                    item['room'] = cellSplitItem.split(',')[2]
+                    resultRow['schedule_study']['schedule'].append(item)
+            else:
+                resultRow['schedule_study']['schedule'] = None
+            # Weeks
+            if (cell[8].text != None and len(cell[8].text) > 0):
+                resultRow['schedule_study']['weeks'] = []
+                cellSplit = cell[8].text.split(';') if (';' in cell[8].text) else [cell[8].text]
+                for cellSplitItem in cellSplit:
+                    item = {}
+                    item['start'] = cellSplitItem.split('-')[0]
+                    item['end'] = cellSplitItem.split('-')[1]
+                    resultRow['schedule_study']['weeks'].append(item)
+            else:
+                resultRow['schedule_study']['weeks'] = None
+            # Point formula
+            resultRow['point_formula'] = cell[10].text
+            # Plus credit to total
+            result['total_credit'] += resultRow['credit']
+            # Append to schedule list
+            result['schedule_list'].append(resultRow)
+        
         # Find all subjects schedule examination
         schExamTable = soup.find('table', {'id': 'TTKB_GridLT'})
         schExamRow = schExamTable.find_all('tr', {'class': 'GridRow'})
-        dataSchExam = [
-            ['ID', 1, 'string'],
-            ['Name', 2, 'string'],
-            ['GroupExam', 3, 'string'],
-            ['IsGlobalExam', 4, 'bool'],
-            ['DateExamInString', 5, 'string']
-        ]
+
         for i in range(0, len(schExamRow), 1):
-            resultRow = __TableRowToJson__(schExamRow[i], dataSchExam)
-            for j in range (0, len(result['schedulelist']), 1):
-                if result['schedulelist'][i]['Name'] == resultRow['Name']:
-                    result['schedulelist'][i]['GroupExam'] = resultRow['GroupExam']
-                    result['schedulelist'][i]['IsGlobalExam'] = resultRow['IsGlobalExam']
-                    result['schedulelist'][i]['DateExam'] = __string2ExamSchedule__(resultRow['DateExamInString'], GetRegionGMT())['examDate']
-                    result['schedulelist'][i]['RoomExam'] = __string2ExamSchedule__(resultRow['DateExamInString'], GetRegionGMT())['examRoom']
+            cell = schExamRow[i].find_all('td', {'class':'GridCell'})
+            for j in range(0, len(result['schedule_list']), 1):
+                if (result['schedule_list'][j]['id'] == cell[1].text):
+                    result['schedule_list'][j]['schedule_exam'] = {}
+                    result['schedule_list'][j]['schedule_exam']['group'] = cell[3].text
+                    result['schedule_list'][j]['schedule_exam']['is_global'] = True if ('GridCheck' in cell[4].attrs.get('class')) else False
+                    result['schedule_list'][j]['schedule_exam']['date'] = __string2ExamSchedule__(cell[5].text)['examDate']
+                    result['schedule_list'][j]['schedule_exam']['room'] = __string2ExamSchedule__(cell[5].text)['examRoom']
     except Exception as ex:
-        result['totalcredit'] = 0.0
-        result['schedulelist'].clear()
+        result['total_credit'] = 0.0
+        result['schedule_list'].clear()
+        print(ex)
     finally:
         return result
 
@@ -207,42 +211,38 @@ def GetSubjectFee(sessionID: str, year: int = 20, semester: int = 1, studyAtSumm
     """
     result = {}
     result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
-    result['totalcredit'] = 0
-    result['totalmoney'] = 0
-    result['feelist'] = []
+    result['total_credit'] = 0
+    result['total_money'] = 0
+    result['fee_list'] = []
     try:
         if (IsLoggedIn(sessionID) == False):
-            raise Exception('Page isn\'t load successfully.')
-        if studyAtSummer:
-            satS = 1
-        else:
-            satS = 0
+            raise Exception('You are not logged in.')
         headers = CaseInsensitiveDict()
         headers['Cookie'] = "ASP.NET_SessionId={id}".format(id=sessionID)
-        webHTML = requests.get(URL_ACCOUNTFEE.format(nam = year, hocky = semester, hoche = satS), headers=headers)
+        webHTML = requests.get(URL_ACCOUNTFEE.format(nam = year, hocky = semester, hoche = 1 if (studyAtSummer) else 0), headers=headers)
         soup = BeautifulSoup(webHTML.content, 'lxml')
         # Find all subjects fees
         feeTable = soup.find('table', {'id': 'THocPhi_GridInfo'})
         feeRow = feeTable.find_all('tr', {'class': 'GridRow'})
-        dataInput = [
-            ['ID', 1, 'string'],
-            ['Name', 2, 'string'],
-            ['Credit', 3, 'num'],
-            ['IsHighQuality', 4, 'bool'],
-            ['Price', 5, 'num'],
-            ['Debt', 6, 'bool'],
-            ['IsReStudy', 7, 'bool'],
-            ['VerifiedPaymentAt', 8, 'string']
-        ]
-        for i in range(0, len(feeRow) - 1, 1):
-            resultRow = __TableRowToJson__(feeRow[i], dataInput)
-            result['totalcredit'] += resultRow['Credit']
-            result['totalmoney'] += resultRow['Price']
-            result['feelist'].append(resultRow)
-    except:
-        result['totalcredit'] = 0
-        result['totalmoney'] = 0
-        result['feelist'] = []
+        for i in range (0, len(feeRow) - 1, 1):
+            cell = feeRow[i].find_all('td', {'class':'GridCell'})
+            item = {}
+            item['id'] = cell[1].text
+            item['name'] = cell[2].text
+            item['credit'] = float(cell[3].text)
+            item['is_high_quality'] = True if ('GridCheck' in cell[4].attrs.get('class')) else False
+            item['price'] = 0 if (cell[5].text == None or len(cell[5].text) == 0) else float(cell[5].text.replace(',', ''))
+            item['debt'] = True if ('GridCheck' in cell[6].attrs.get('class')) else False
+            item['is_restudy'] = True if ('GridCheck' in cell[7].attrs.get('class')) else False
+            item['verified_payment_at'] = cell[8].text
+            result['total_credit'] += item['credit']
+            result['total_money'] += item['price']
+            result['fee_list'].append(item)
+    except Exception as ex:
+        result['total_credit'] = 0
+        result['total_money'] = 0
+        result['fee_list'] = []
+        print(ex)
     finally:
         return result
 
@@ -253,19 +253,19 @@ def __getStudentID__(soup: BeautifulSoup):
 def GetAccountInformation(sessionID: str):
     result = {}
     result['date'] = round(datetime.timestamp(datetime.now()) * 1000, 0)
-    result['accountinfo'] = {}
+    result['account_info'] = {}
     try:
         if (IsLoggedIn(sessionID) == False):
-            raise Exception('Page isn\'t load successfully.')
+            raise Exception('You are not logged in.')
         headers = CaseInsensitiveDict()
         headers['Cookie'] = "ASP.NET_SessionId={id}".format(id=sessionID)
         webHTML = requests.get(URL_ACCOUNTINFORMATION, headers=headers)
         soup = BeautifulSoup(webHTML.content, 'lxml')
         for col in accInfoCol:
-            result['accountinfo'][col['jsname']] = GetValueFromAccountInformation(soup, col)
-        result['accountinfo']['studentId'] = __getStudentID__(soup)
+            result['account_info'][col['jsname']] = GetValueFromAccountInformation(soup, col)
+        result['account_info']['studentId'] = __getStudentID__(soup)
     except Exception as ex:
-        pass
+        print(ex)
     finally:
         return result
         

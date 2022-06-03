@@ -17,10 +17,6 @@ def GetCurrentWeek(year: int = 21):
         raise Exception("""Invalid 'year' parameters (must be in range (16, 21)).""")
     return round((datetime.now() - dt).days / 7 + 1)
 
-# Get current GMT
-def GetRegionGMT():
-    return round((-time.timezone) / 3600, 1)
-
 def GetValueFromAccountInformation(soup: BeautifulSoup, id: dict):
     tempHtml = soup.find(id['tag'], {'id': id['id']})
     try:

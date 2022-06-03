@@ -72,12 +72,12 @@ accInfoCol = [
     {
         'tag': 'input',
         'id': 'CN_txtSoBHYT',
-        'jsname': 'hiid',
+        'jsname': 'hIId',
     },
     {
         'tag': 'input',
         'id': 'CN_txtHanBHYT',
-        'jsname': 'hiexpiredate',
+        'jsname': 'hIExpireDate',
     },
     {
         'tag': 'input',
@@ -87,32 +87,32 @@ accInfoCol = [
     {
         'tag': 'input',
         'id': 'CN_txtLop',
-        'jsname': 'class',
+        'jsname': 'schoolClass',
     },
     {
         'tag': 'input',
         'id': 'MainContent_CN_txtCTDT',
-        'jsname': 'trainingprogramplan',
+        'jsname': 'trainingProgramPlan',
     },
     {
         'tag': 'input',
         'id': 'MainContent_CN_txtCT2',
-        'jsname': 'trainingprogramplan2',
+        'jsname': 'trainingProgramPlan2',
     },
     {
         'tag': 'input',
         'id': 'CN_txtMail1',
-        'jsname': 'schoolemail',
+        'jsname': 'schoolEmail',
     },
     {
         'tag': 'input',
         'id': 'CN_txtMail2',
-        'jsname': 'personalemail',
+        'jsname': 'personalEmail',
     },
     {
         'tag': 'input',
         'id': 'CN_txtMK365',
-        'jsname': 'schoolemailinitpass',
+        'jsname': 'schoolEmailInitPass',
     },
     {
         'tag': 'input',
