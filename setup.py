@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='dutapi',
-    version='1.5.1',
+    version='1.6.0',
     author='ZoeMeow',
     author_email='ZoeMeow5466@outlook.com',
     url='https://github.com/ZoeMeow5466/DUTAPI.Python',
