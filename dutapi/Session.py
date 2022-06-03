@@ -102,6 +102,7 @@ def __string2ExamSchedule__(src: str):
                 date = date.replace(hour=int(splitted[0]))
             if len(splitted) > 1:
                 date = date.replace(minute=int(splitted[1]))
+    date = date - timedelta(hours=7) + timedelta(hours=GetRegionGMT())
     # Return
     result = {}
     result['examDate'] = round(datetime.timestamp(date) * 1000, 0)

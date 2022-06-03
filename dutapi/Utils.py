@@ -8,6 +8,9 @@ import json
 from dutapi.__Variables__ import *
 from dutapi.Enums import *
 
+def GetRegionGMT():
+    return round((-time.timezone) / 3600, 1)
+
 # Data from dut.udn.vn.
 def GetCurrentWeek(year: int = 21):
     schoolyear_start_json: dict = json.loads(SCHOOLYEAR_START)
