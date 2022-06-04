@@ -90,4 +90,44 @@ VIEWSTATE = ''.join([
     'R0aDogMTAwcHg7Jz48L2Rpdj48L2Rpdj48L2xpPjwvdWw+ZGSG2IsLearNCsLzIS4IUfWLr31R7FXOMNnIboe38N+JJg=='
 ])
 
-SCHOOLYEAR_START = """{"16":{"year":2016,"month":8,"day":8},"17":{"year":2017,"month":8,"day":7},"18":{"year":2018,"month":8,"day":6},"19":{"year":2019,"month":8,"day":5},"20":{"year":2020,"month":8,"day":3},"21":{"year":2021,"month":8,"day":2},"gmt":7}"""
+SCHOOLYEAR_START = """{
+    "gmt": 7,
+    "list": [
+    {
+        "year_id": 16,
+        "year": 2016,
+        "month": 8,
+        "day": 8
+    },
+    {
+        "year_id": 17,
+        "year": 2017,
+        "month": 8,
+        "day": 7
+    },
+    {
+        "year_id": 18,
+        "year": 2018,
+        "month": 8,
+        "day": 6
+    },
+    {
+        "year_id": 19,
+        "year": 2019,
+        "month": 8,
+        "day": 5
+    },
+    {
+        "year_id": 20,
+        "year": 2020,
+        "month": 8,
+        "day": 3
+    },
+    {
+        "year_id": 21,
+        "year": 2021,
+        "month": 8,
+        "day": 2
+    }
+    ]
+}"""
