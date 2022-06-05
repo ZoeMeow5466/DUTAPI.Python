@@ -1,8 +1,9 @@
 
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import json
+import math
 
 # Import configured variables
 from dutapi.__Variables__ import *
@@ -14,11 +15,18 @@ def GetRegionGMT():
 # Data from dut.udn.vn.
 def GetCurrentWeek(year: int = 21):
     schoolyear_start_json: dict = json.loads(SCHOOLYEAR_START)
-    if str(year) in schoolyear_start_json.keys():
-        dt = datetime(schoolyear_start_json[str(year)]['year'], schoolyear_start_json[str(year)]['month'], schoolyear_start_json[str(year)]['day'])
-    else:
-        raise Exception("""Invalid 'year' parameters (must be in range (16, 21)).""")
-    return round((datetime.now() - dt).days / 7 + 1)
+    result = None
+    try:
+        for item in schoolyear_start_json['list']:
+            if item['year_id'] == year:
+                dt = datetime(item['year'], item['month'], item['day'])
+                result = round((datetime.now() - timedelta(hours=GetRegionGMT()) + timedelta(hours=7) - dt).days / 7 + 2, 3)
+        if result == None:
+            raise Exception("""Invalid 'year' parameters (must be in range (16, 21)).""")
+    except Exception as ex:
+        result = -1
+        print(ex)
+    return result
 
 def GetValueFromAccountInformation(soup: BeautifulSoup, id: dict):
     tempHtml = soup.find(id['tag'], {'id': id['id']})
